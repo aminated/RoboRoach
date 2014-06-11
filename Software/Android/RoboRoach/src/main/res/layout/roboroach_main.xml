@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     >
 
+
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/container"
@@ -55,9 +56,34 @@
             android:id="@+id/textConfig"
             android:layout_gravity="bottom|center" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send Signal"
+            android:id="@+id/btnSend"
+            android:layout_gravity="center_horizontal|bottom"
+            android:visibility="gone" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Left"
+            android:id="@+id/chkLeft"
+            android:layout_gravity="left|center_vertical"
+            android:enabled="true"
+            android:visibility="gone" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Right"
+            android:id="@+id/chkRight"
+            android:layout_gravity="right|center_vertical"
+            android:enabled="true"
+            android:visibility="gone" />
+
 
     </FrameLayout>
-
 
     <LinearLayout
         android:orientation="vertical"
@@ -172,6 +198,17 @@
 
 
         <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Advanced Mode"
+                android:id="@+id/chkAdvanced" />
+        </TableRow>
+
+        <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -186,4 +223,5 @@
         </TableRow>
 
     </LinearLayout>
+
 </ViewFlipper>

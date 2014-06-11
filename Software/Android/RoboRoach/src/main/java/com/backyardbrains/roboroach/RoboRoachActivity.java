@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import 	android.widget.ViewFlipper;
@@ -43,7 +44,7 @@ public class RoboRoachActivity extends Activity implements RoboRoachManagerCallb
     private boolean mScanning = false;
     private boolean mTurning = false;
     private boolean mOnSettingsScreen = false;
-
+    private boolean mAdvanced = false;
 
     private String mDeviceAddress;
 
@@ -91,13 +92,34 @@ public class RoboRoachActivity extends Activity implements RoboRoachManagerCallb
         viewHolder.Frequecy = (SeekBar) findViewById(R.id.sbFrequency);
         viewHolder.PulseWidth = (SeekBar) findViewById(R.id.sbPulseWidth);
         viewHolder.RandomMode = (Switch) findViewById(R.id.swRandomMode);
+        viewHolder.Advanced = (CheckBox) findViewById(R.id.chkAdvanced);
+        viewHolder.Left = (CheckBox) findViewById(R.id.chkLeft);
+        viewHolder.Right = (CheckBox) findViewById(R.id.chkRight);
+        viewHolder.Send = (Button) findViewById(R.id.btnSend);
 
         viewHolder.roachImage.setVisibility(View.VISIBLE);
         viewHolder.backpackImage.setVisibility(View.INVISIBLE);
-        viewHolder.goLeftText.setVisibility(View.INVISIBLE);
-        viewHolder.goRightText.setVisibility(View.INVISIBLE);
 
 
+        viewHolder.Advanced.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+            public void onCheckedChanged(CompoundButton checkBox, boolean fromUser){
+                setAdvanced(checkBox.isChecked());
+            }
+        });
+        viewHolder.Send.setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View button){
+                if(mAdvanced){
+                    if(viewHolder.Left.isChecked()){
+                        mRoboRoachManager.turnLeft();
+                    }
+                    if(viewHolder.Right.isChecked()){
+                        mRoboRoachManager.turnRight();
+                    }
+                  onSend();
+                }
+
+            }
+        });
         viewHolder.Frequecy.setMax(150);
         viewHolder.Frequecy.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress,
@@ -140,25 +162,26 @@ public class RoboRoachActivity extends Activity implements RoboRoachManagerCallb
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
             }
+
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
 
             public void onStopTrackingTouch(SeekBar seekBar) {
 
-                float roundedGain = Math.round((float)seekBar.getProgress()/ 5.0f) * 5.0f;
-                mRoboRoachManager.updateGain( (int) roundedGain );
+                float roundedGain = Math.round((float) seekBar.getProgress() / 5.0f) * 5.0f;
+                mRoboRoachManager.updateGain((int) roundedGain);
                 viewHolder.configText.setText(mRoboRoachManager.getRoboRoachConfigurationString());
             }
         });
 
         viewHolder.RandomMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if ( mRoboRoachManager.isConnected()) {
+                if (mRoboRoachManager.isConnected()) {
 
                     mRoboRoachManager.updateRandomMode(isChecked);
                     viewHolder.PulseWidth.setEnabled(!viewHolder.RandomMode.isChecked());
                     viewHolder.Frequecy.setEnabled(!viewHolder.RandomMode.isChecked());
-                    viewHolder.configText.setText( mRoboRoachManager.getRoboRoachConfigurationString());
+                    viewHolder.configText.setText(mRoboRoachManager.getRoboRoachConfigurationString());
                 }
             }
         });
@@ -231,7 +254,23 @@ public class RoboRoachActivity extends Activity implements RoboRoachManagerCallb
 
     }
 
-
+    public void setAdvanced(boolean isAdv){
+        mAdvanced = isAdv;
+        if(isAdv){
+            viewHolder.goLeftText.setVisibility(View.GONE);
+            viewHolder.goRightText.setVisibility(View.GONE);
+            viewHolder.Left.setVisibility(View.VISIBLE);
+            viewHolder.Right.setVisibility(View.VISIBLE);
+            viewHolder.Send.setVisibility(View.VISIBLE);
+        }
+        else{
+            viewHolder.goLeftText.setVisibility(View.VISIBLE);
+            viewHolder.goRightText.setVisibility(View.VISIBLE);
+            viewHolder.Left.setVisibility(View.GONE);
+            viewHolder.Right.setVisibility(View.GONE);
+            viewHolder.Send.setVisibility(View.GONE);
+        }
+    }
     public void updateSettingConstraints() {
 
 
@@ -263,7 +302,10 @@ public class RoboRoachActivity extends Activity implements RoboRoachManagerCallb
         invalidateOptionsMenu();
 
     };
+    protected void onSend(){
+        Toast.makeText(this, "Sending Signal", Toast.LENGTH_LONG).show();
 
+    }
 
     @Override
     protected void onPause() {
@@ -498,12 +540,15 @@ public class RoboRoachActivity extends Activity implements RoboRoachManagerCallb
         ImageView roachImage;
         ImageView backpackImage;
 
+        CheckBox Left;
+        CheckBox Right;
         SeekBar Frequecy;
+        CheckBox Advanced;
         SeekBar Duration;
         SeekBar PulseWidth;
         SeekBar Gain;
         Switch  RandomMode;
-
+        Button Send;
     }
 
     @Override
@@ -616,25 +661,28 @@ public class RoboRoachActivity extends Activity implements RoboRoachManagerCallb
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2,
                                float velocityX, float velocityY) {
-            try {
-                float diffAbs = Math.abs(e1.getY() - e2.getY());
-                float diff = e1.getX() - e2.getX();
+            if(!mAdvanced) {
+                try {
+                    float diffAbs = Math.abs(e1.getY() - e2.getY());
+                    float diff = e1.getX() - e2.getX();
 
-                if (diffAbs > SWIPE_MAX_OFF_PATH)
-                    return false;
+                    if (diffAbs > SWIPE_MAX_OFF_PATH)
+                        return false;
 
-                // Left swipe
-                if (diff > SWIPE_MIN_DISTANCE
-                        && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    RoboRoachActivity.this.onLeftSwipe();
+                    // Left swipe
+                    if (diff > SWIPE_MIN_DISTANCE
+                            && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                        RoboRoachActivity.this.onLeftSwipe();
 
-                    // Right swipe
-                } else if (-diff > SWIPE_MIN_DISTANCE
-                        && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    RoboRoachActivity.this.onRightSwipe();
+                        // Right swipe
+                    } else if (-diff > SWIPE_MIN_DISTANCE
+                            && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                        RoboRoachActivity.this.onRightSwipe();
+                    }
+                } catch (Exception e) {
+                    Log.e("RoboRoachActivity", "Error on gestures");
                 }
-            } catch (Exception e) {
-                Log.e("RoboRoachActivity", "Error on gestures");
+                return false;
             }
             return false;
         }

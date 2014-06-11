@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.SeekBar;
@@ -158,7 +159,7 @@ public class RoboRoachSettingsActivity extends Activity implements RoboRoachMana
         SeekBar sbGain;
         SeekBar sbPulseWidth;
         SeekBar sbDuration;
-
+        CheckBox chkAdvanced;
     }
 
 
