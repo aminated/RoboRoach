@@ -20,6 +20,7 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.os.SystemClock;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
@@ -34,6 +35,7 @@ import android.widget.Switch;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 
 public class RoboRoachActivity extends Activity implements RoboRoachManagerCallbacks {
@@ -112,6 +114,7 @@ public class RoboRoachActivity extends Activity implements RoboRoachManagerCallb
                     if(viewHolder.Left.isChecked()){
                         mRoboRoachManager.turnLeft();
                     }
+                    SystemClock.sleep(200);
                     if(viewHolder.Right.isChecked()){
                         mRoboRoachManager.turnRight();
                     }
@@ -303,7 +306,7 @@ public class RoboRoachActivity extends Activity implements RoboRoachManagerCallb
 
     };
     protected void onSend(){
-        Toast.makeText(this, "Sending Signal", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Sending Signal", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -579,28 +582,31 @@ public class RoboRoachActivity extends Activity implements RoboRoachManagerCallb
 
     @Override
     public void uiLeftTurnSentSuccessfully(final int stimulusDuration) {
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                viewHolder.goLeftText.setVisibility(View.VISIBLE);
-                mTurning = true;
-                addTurnCommandTimeout(stimulusDuration);
-            }
-        });
+        //if(!mAdvanced) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    viewHolder.goLeftText.setVisibility(View.VISIBLE);
+                    mTurning = true;
+                    addTurnCommandTimeout(stimulusDuration);
+                }
+            });
+       // }
     }
 
     @Override
     public void uiRightTurnSentSuccessfully(final int stimulusDuration) {
+      //  if(!mAdvanced) {
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                viewHolder.goRightText.setVisibility(View.VISIBLE);
-                mTurning = true;
-                addTurnCommandTimeout(stimulusDuration);
-            }
-        });
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    viewHolder.goRightText.setVisibility(View.VISIBLE);
+                    mTurning = true;
+                    addTurnCommandTimeout(stimulusDuration);
+                }
+            });
+        //}
     }
 
 

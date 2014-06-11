@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:text="Send Signal"
             android:id="@+id/btnSend"
-            android:layout_gravity="center_horizontal|bottom"
+            android:layout_gravity="center_horizontal|bottom|top"
             android:visibility="gone" />
 
         <CheckBox
