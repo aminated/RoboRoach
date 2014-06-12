@@ -486,10 +486,7 @@ uint16 RoboRoachPeripheral_ProcessEvent( uint8 task_id, uint16 events )
   
   if ( events & BYB_STIMULATE_LEFT_EVT )
   {
-    //Don't allow multiple stimulations
-    if (stimulationInProgress){
-       return (events ^ BYB_STIMULATE_LEFT_EVT);
-    }
+    //Allow multiple stimulations
     stimulationIsLeft = 1;
     startRoboRoachStimulation();
     
@@ -498,10 +495,7 @@ uint16 RoboRoachPeripheral_ProcessEvent( uint8 task_id, uint16 events )
 
   if ( events & BYB_STIMULATE_RIGHT_EVT )
   {
-    //Don't allow multiple stimulations
-    if (stimulationInProgress){
-       return (events ^  BYB_STIMULATE_RIGHT_EVT);
-    }
+
     stimulationIsLeft = 0;
     startRoboRoachStimulation();
     
